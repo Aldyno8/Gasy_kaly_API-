@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 
-# Create your views here.
 # List des recettes existante dans la bdd
 class RecipeList(APIView):
     def get(self, request, *args, **kwargs):
@@ -76,12 +75,13 @@ class AddRecipe(APIView):
 # Notation de plats
 class RatingRecipe(APIView):
     def post(self, request, *args, **kwargs):
+        user = request.user
         id_plats = kwargs.get('id')
         rate = request.data.get('rate')
         
         try:
             plat = Plats.objects.get(id=id_plats)
-            rating = Rating.objects.create(rate=rate, plat=plat)
+            rating = Rating.objects.create(rate=rate,author=user, plat=plat)
             
             if not rating:
                 return Response({"message":"erreur lors de la notation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -96,12 +96,24 @@ class RatingRecipe(APIView):
             plat.rate = moyenne
             plat.save()
             
-            
             return Response({"message":"note enregistrée"}, status=status.HTTP_201_CREATED)
         
         except Exception as b:
             return Response({"message": str(b)}, status=status.HTTP_400_BAD_REQUEST)
             
+# Commenter un plat
+class CommentRecipe(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        id_plat = kwargs.get('id')
+        commentaire = request.data.get('commentaire')
+        
+        try:
+            plat = Plats.objects.get(id=id_plat)
+            comment = Commentaire.objects.create(author=user, commentaire=commentaire, plat=plat)
+            return Response({"message":"commentaire enregistré"}, status=status.HTTP_202_ACCEPTED)
+        except Exception as b:
+            return Response({"message":str(b)}, status=status.HTTP_400_BAD_REQUEST)
         
                 
         

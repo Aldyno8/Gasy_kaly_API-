@@ -22,8 +22,14 @@ class RateAdmin(admin.ModelAdmin):
     model = Rating
     list_display = ['rate', ]
     
+class CommsAdmin(admin.ModelAdmin):
+    model = Commentaire
+    list_display = ['commentaire', ]
+    
+    
 admin.site.register(Plats, PlatsAdmin)
 admin.site.register(Ingrédients, IngredientAdmin)
 admin.site.register(Preparation, PrepaAdmin)
 admin.site.register(Utils, UtilsAdmin)
 admin.site.register(Rating, RateAdmin)
+admin.site.register(Commentaire, CommsAdmin)

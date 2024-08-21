@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 categories = {"Plats":"Plats", "Dessert":"Dessert", "Boisson":"Boisson"}
 
 # Create your models here.
@@ -37,7 +38,14 @@ class Preparation(models.Model):
      
 # Table qui gère les notes
 class Rating(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rating', null=True)
     rate = models.FloatField()
     plat = models.ForeignKey(Plats, related_name='note', on_delete=models.CASCADE)
+    
+class Commentaire(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='commentaire')
+    commentaire = models.TextField()
+    plat = models.ForeignKey(Plats, related_name='commentaire', on_delete=models.CASCADE)
+    
 
     
