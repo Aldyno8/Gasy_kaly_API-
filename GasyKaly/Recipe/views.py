@@ -1,19 +1,30 @@
 from rest_framework import status
+from rest_framework.pagination import CursorPagination
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from .models import *
 from .serializers import *
 
+class Pagination(CursorPagination):
+    page_size = 5
+    ordering = 'category'
+    
 # List des recettes existante dans la bdd
 class RecipeList(APIView):
-    def get(self, request, *args, **kwargs):
+    pagination_class = Pagination()
+    @method_decorator(cache_page(60*10))
+    def get(self, request):
+        queryset = Plats.objects.all()
+        paginator = Pagination()
         try:
-            recipe = Plats.objects.all()
-            plat = RecipeSerializers(recipe, many=True)
-            return Response(plat.data, status=status.HTTP_200_OK)
-        
+            paginated_data = paginator.paginate_queryset(queryset, request)
+            plats = RecipeSerializers(paginated_data, many=True).data
+            return paginator.get_paginated_response(plats)
         except Exception as b:
-            return Response({"message":str(b)})
+            return Response({"message": str(b)}, status=status.HTTP_400_BAD_REQUEST)
 
 # Détails pour chaque Recettes
 class RecipeDetails(APIView):
