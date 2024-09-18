@@ -9,7 +9,7 @@ class UtilsSerialisers(serializers.ModelSerializer):
 class RecipeSerializers(serializers.ModelSerializer):
     class Meta:
         model = Plats
-        fields = ['name', 'category', 'rate', 'date', 'utils']
+        fields = ['id', 'name', 'category', 'rate', 'date', 'utils', 'image']
     utils = UtilsSerialisers(many=True)
         
 class Ingredientsserialisers(serializers.ModelSerializer):

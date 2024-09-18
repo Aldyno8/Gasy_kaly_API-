@@ -50,6 +50,7 @@ class RecipeDetails(APIView):
 class AddRecipe(APIView):
     def post(self, request, *args, **kwargs):
         name = request.data.get('name')
+        image = request.data.get('image')
         category = request.data.get('category')
         utils = request.data.get('utils')
         ingredients = request.data.get('ingredients')
